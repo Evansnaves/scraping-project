@@ -9,7 +9,7 @@ kakasi = pykakasi.kakasi()
 product_id = []
 product_name = []
 product_price = []
-product_image = []
+product_img = []
 base_url = "https://www.hobbystation-single.jp"
 
 df = pd.DataFrame()
@@ -33,7 +33,8 @@ soup = BeautifulSoup(page_to_scrape.text, "html.parser")
 dirty_id = soup.find_all("div", style="text-align:center;border: none; color: navy; font-size:small; background-color: lightcyan;")
 dirty_name = soup.find_all("div", attrs={"class":"list_product_Name_sp"})
 dirty_price = soup.find_all("div", attrs={"class" : "packageDetail"})
-images = soup.find_all("figure")
+figure_images = soup.find_all("figure")
+
 
 for i in dirty_id:
     product_id.append(i.get_text(strip=True))
@@ -48,16 +49,15 @@ for i in dirty_price:
     price = text.split("円")[0] + "円"
     product_price.append(price)
 
-for i in images:
-    img = i.find("img")
-    if img: 
-        img_url = img['src']
-    img_url = base_url + img_url
-    product_image.append(img_url)
+for i in figure_images:
+    img = i.find("img")['src']
+    img_link = base_url + img
+    product_img.append(img_link)
 
 df['product_id'] = product_id
 df['product_name'] = product_name
 df['product_price'] = product_price
-df['product_image'] = product_image
+df['product_img'] = product_img
+
 print(tabulate(df, headers='keys', tablefmt='psql'))
 
